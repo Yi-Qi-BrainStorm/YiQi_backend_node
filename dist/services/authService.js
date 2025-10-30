@@ -47,7 +47,16 @@ const loginUser = async (username, password) => {
     }
     // 生成JWT令牌
     const token = jsonwebtoken_1.default.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
-    return token;
+    // 返回令牌和用户信息
+    return {
+        token,
+        user: {
+            id: user.id,
+            username: user.username,
+            password: '', // 不返回密码
+            createdAt: user.createdAt
+        }
+    };
 };
 exports.loginUser = loginUser;
 // 验证JWT令牌

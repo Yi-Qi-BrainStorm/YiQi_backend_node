@@ -6,6 +6,16 @@ const router = express.Router();
 // 注册路由
 router.post('/register', async (req, res) => {
   try {
+    // 调试信息
+    console.log('Received request body:', req.body);
+    console.log('Content-Type header:', req.headers['content-type']);
+    
+    // 检查请求体是否存在
+    if (!req.body) {
+      res.status(400).json({ message: '请求体不能为空' });
+      return;
+    }
+    
     const { username, password } = req.body;
 
     // 验证输入
@@ -39,6 +49,16 @@ router.post('/register', async (req, res) => {
 // 登录路由
 router.post('/login', async (req, res) => {
   try {
+    // 调试信息
+    console.log('Received request body:', req.body);
+    console.log('Content-Type header:', req.headers['content-type']);
+    
+    // 检查请求体是否存在
+    if (!req.body) {
+      res.status(400).json({ message: '请求体不能为空' });
+      return;
+    }
+    
     const { username, password } = req.body;
 
     // 验证输入
@@ -48,17 +68,17 @@ router.post('/login', async (req, res) => {
     }
 
     // 用户登录
-    const token = await loginUser(username, password);
+    const result = await loginUser(username, password);
     
-    if (!token) {
+    if (!result) {
       res.status(401).json({ message: '用户名或密码错误' });
       return;
     }
 
     res.json({ 
       message: '登录成功',
-      token,
-      username
+      token: result.token,
+      user: result.user
     });
   } catch (error) {
     console.error('登录错误:', error);

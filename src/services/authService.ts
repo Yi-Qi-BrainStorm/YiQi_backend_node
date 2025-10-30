@@ -35,7 +35,7 @@ export const registerUser = async (username: string, password: string): Promise<
 };
 
 // 用户登录
-export const loginUser = async (username: string, password: string): Promise<string | null> => {
+export const loginUser = async (username: string, password: string): Promise<{token: string, user: User} | null> => {
   const users = readUsers();
   
   // 查找用户
@@ -57,7 +57,16 @@ export const loginUser = async (username: string, password: string): Promise<str
     { expiresIn: '1h' }
   );
   
-  return token;
+  // 返回令牌和用户信息
+  return {
+    token,
+    user: {
+      id: user.id,
+      username: user.username,
+      password: '', // 不返回密码
+      createdAt: user.createdAt
+    }
+  };
 };
 
 // 验证JWT令牌

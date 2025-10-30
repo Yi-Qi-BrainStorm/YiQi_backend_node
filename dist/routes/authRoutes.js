@@ -9,6 +9,14 @@ const router = express_1.default.Router();
 // 注册路由
 router.post('/register', async (req, res) => {
     try {
+        // 调试信息
+        console.log('Received request body:', req.body);
+        console.log('Content-Type header:', req.headers['content-type']);
+        // 检查请求体是否存在
+        if (!req.body) {
+            res.status(400).json({ message: '请求体不能为空' });
+            return;
+        }
         const { username, password } = req.body;
         // 验证输入
         if (!username || !password) {
@@ -38,6 +46,14 @@ router.post('/register', async (req, res) => {
 // 登录路由
 router.post('/login', async (req, res) => {
     try {
+        // 调试信息
+        console.log('Received request body:', req.body);
+        console.log('Content-Type header:', req.headers['content-type']);
+        // 检查请求体是否存在
+        if (!req.body) {
+            res.status(400).json({ message: '请求体不能为空' });
+            return;
+        }
         const { username, password } = req.body;
         // 验证输入
         if (!username || !password) {
@@ -45,15 +61,15 @@ router.post('/login', async (req, res) => {
             return;
         }
         // 用户登录
-        const token = await (0, authService_1.loginUser)(username, password);
-        if (!token) {
+        const result = await (0, authService_1.loginUser)(username, password);
+        if (!result) {
             res.status(401).json({ message: '用户名或密码错误' });
             return;
         }
         res.json({
             message: '登录成功',
-            token,
-            username
+            token: result.token,
+            user: result.user
         });
     }
     catch (error) {
