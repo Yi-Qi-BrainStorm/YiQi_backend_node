@@ -77,4 +77,41 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: '服务器内部错误' });
     }
 });
+// 检查token是否有效的路由
+router.post('/check', (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+        if (!token) {
+            res.status(401).json({
+                message: '访问令牌缺失',
+                valid: false
+            });
+            return;
+        }
+        const decoded = (0, authService_1.verifyToken)(token);
+        if (!decoded) {
+            res.status(403).json({
+                message: '无效或过期的令牌',
+                valid: false
+            });
+            return;
+        }
+        res.json({
+            message: '令牌有效',
+            valid: true,
+            user: {
+                id: decoded.id,
+                username: decoded.username
+            }
+        });
+    }
+    catch (error) {
+        console.error('检查令牌错误:', error);
+        res.status(500).json({
+            message: '服务器内部错误',
+            valid: false
+        });
+    }
+});
 exports.default = router;
