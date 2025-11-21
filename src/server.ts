@@ -1,3 +1,7 @@
+// Load environment variables first
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Application, Request, Response } from 'express';
 import path from 'path';
 import authRoutes from './routes/authRoutes';
