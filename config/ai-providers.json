@@ -1,0 +1,45 @@
+{
+  "providers": {
+    "deepseek": {
+      "baseURL": "https://api.deepseek.com/v1/chat/completions",
+      "apiKey": "${DEEPSEEK_API_KEY}",
+      "models": ["deepseek-chat", "deepseek-reasoner"]
+    },
+    "kimi": {
+      "baseURL": "https://api.moonshot.cn/v1/chat/completions",
+      "apiKey": "${KIMI_API_KEY}",
+      "models": [
+        "kimi-k2-0905-preview",
+        "kimi-k2-turbo-preview",
+        "kimi-k2-thinking-turbo",
+        "kimi-latest"
+      ]
+    },
+    "qwen": {
+      "baseURL": "https://api.siliconflow.cn/v1/chat/completions",
+      "apiKey": "${QWEN_API_KEY}",
+      "models": [
+        "Qwen/QwQ-32B",
+        "Qwen/Qwen3-235B-A22B-Instruct-2507"
+      ]
+    },
+    "openrouter": {
+      "baseURL": "https://openrouter.ai/api/v1/chat/completions",
+      "apiKey": "${OPENROUTER_API_KEY}",
+      "models": [
+        "z-ai/glm-4.5-air:free",
+        "tngtech/deepseek-r1t2-chimera:free",
+        "deepseek/deepseek-chat-v3-0324:free",
+        "meta-llama/llama-3.3-70b-instruct:free"
+      ]
+    }
+  },
+  "rateLimits": {
+    "requestsPerMinute": 10,
+    "maxMessageLength": 4000,
+    "maxSystemPromptLength": 2000
+  },
+  "session": {
+    "expirationHours": 24
+  }
+}

@@ -41,7 +41,6 @@ temp/
 
 # User data (if storing locally)
 src/data/users.json
-config/ai-providers.json
 QUICK_START.md
 CONFIG_SUMMARY.md
 docs/
