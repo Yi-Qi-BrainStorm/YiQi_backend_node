@@ -41,7 +41,10 @@ temp/
 
 # User data (if storing locally)
 src/data/users.json
+
+# Generated documentation (keep docs/ folder for manual docs)
 QUICK_START.md
 CONFIG_SUMMARY.md
-docs/
+
+# Kiro specs (optional - remove if you want to track specs)
 .kiro
