@@ -207,17 +207,24 @@ class OpenRouterProvider extends OpenAICompatibleProvider {
 export class AIProviderService {
   private providers: Map<string, AIProvider> = new Map();
   private modelToProvider: Map<string, string> = new Map();
+  private initialized: boolean = false;
 
   constructor() {
-    this.initializeProviders();
+    // Don't initialize in constructor - wait for explicit call
   }
 
   /**
    * Initialize all providers from configuration
+   * This must be called after ConfigService.loadConfig()
    */
   private initializeProviders(): void {
+    if (this.initialized) {
+      return; // Already initialized
+    }
+
     const configService = getConfigService();
     const config = configService.getFullConfig();
+    this.initialized = true;
 
     for (const [providerName, providerConfig] of Object.entries(config.providers)) {
       // Create provider instance
@@ -257,6 +264,7 @@ export class AIProviderService {
    * Get provider by model name
    */
   public getProvider(modelName: string): AIProvider {
+    this.initializeProviders(); // Ensure initialized
     const providerName = this.modelToProvider.get(modelName);
     
     if (!providerName) {
@@ -295,6 +303,7 @@ export class AIProviderService {
    * Get all supported models
    */
   public getSupportedModels(): string[] {
+    this.initializeProviders(); // Ensure initialized
     return Array.from(this.modelToProvider.keys());
   }
 
@@ -302,6 +311,7 @@ export class AIProviderService {
    * Check if a model is supported
    */
   public isModelSupported(modelName: string): boolean {
+    this.initializeProviders(); // Ensure initialized
     return this.modelToProvider.has(modelName);
   }
 }

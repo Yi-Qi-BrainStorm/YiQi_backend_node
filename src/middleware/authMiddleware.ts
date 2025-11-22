@@ -22,11 +22,25 @@ declare global {
  * Returns 401 error for invalid or expired tokens
  * Extracts userId from token and attaches to request object
  * 
+ * Supports token from:
+ * 1. Authorization header (Bearer token) - for POST requests
+ * 2. URL query parameter (token) - for SSE GET requests
+ * 
  * Requirements: 5.1, 5.2
  */
 export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  let token: string | undefined;
+
+  // 1. Try to get token from Authorization header (POST requests)
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  }
+
+  // 2. If not in header, try to get from URL query parameter (SSE GET requests)
+  if (!token && req.query.token) {
+    token = req.query.token as string;
+  }
 
   if (!token) {
     const errorResponse: ErrorResponse = {

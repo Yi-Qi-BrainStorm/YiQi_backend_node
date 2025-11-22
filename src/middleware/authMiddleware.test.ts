@@ -25,7 +25,8 @@ describe('authMiddleware', () => {
     statusMock = jest.fn().mockReturnValue({ json: jsonMock });
     
     mockRequest = {
-      headers: {}
+      headers: {},
+      query: {}
     };
     
     mockResponse = {
@@ -90,6 +91,67 @@ describe('authMiddleware', () => {
     expect(mockRequest.username).toBe('testuser');
     expect(nextFunction).toHaveBeenCalled();
     expect(statusMock).not.toHaveBeenCalled();
+  });
+
+  it('should accept token from URL query parameter (for SSE)', () => {
+    mockRequest.query = {
+      token: 'valid_token_from_query'
+    };
+    
+    const decodedToken = {
+      id: 'user456',
+      username: 'sseuser'
+    };
+    
+    (verifyToken as jest.Mock).mockReturnValue(decodedToken);
+
+    authMiddleware(mockRequest as Request, mockResponse as Response, nextFunction);
+
+    expect(mockRequest.userId).toBe('user456');
+    expect(mockRequest.username).toBe('sseuser');
+    expect(nextFunction).toHaveBeenCalled();
+    expect(statusMock).not.toHaveBeenCalled();
+  });
+
+  it('should prioritize Authorization header over query parameter', () => {
+    mockRequest.headers = {
+      authorization: 'Bearer header_token'
+    };
+    mockRequest.query = {
+      token: 'query_token'
+    };
+    
+    const decodedToken = {
+      id: 'user789',
+      username: 'headeruser'
+    };
+    
+    (verifyToken as jest.Mock).mockReturnValue(decodedToken);
+
+    authMiddleware(mockRequest as Request, mockResponse as Response, nextFunction);
+
+    expect(verifyToken).toHaveBeenCalledWith('header_token');
+    expect(mockRequest.userId).toBe('user789');
+    expect(nextFunction).toHaveBeenCalled();
+  });
+
+  it('should return 401 when query token is invalid', () => {
+    mockRequest.query = {
+      token: 'invalid_query_token'
+    };
+    
+    (verifyToken as jest.Mock).mockReturnValue(null);
+
+    authMiddleware(mockRequest as Request, mockResponse as Response, nextFunction);
+
+    expect(statusMock).toHaveBeenCalledWith(401);
+    expect(jsonMock).toHaveBeenCalledWith({
+      error: {
+        code: ErrorCode.TOKEN_EXPIRED,
+        message: 'Invalid or expired token'
+      }
+    });
+    expect(nextFunction).not.toHaveBeenCalled();
   });
 });
 

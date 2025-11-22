@@ -11,7 +11,6 @@ import { rateLimitMiddleware } from '../middleware/rateLimitMiddleware';
 import { AgentConfig, ErrorCode, ErrorResponse, AppError } from '../types/chat';
 
 const router = express.Router();
-const chatService = getChatService();
 
 /**
  * POST /api/chat/send - Non-stream chat endpoint
@@ -28,6 +27,7 @@ router.post(
   rateLimitMiddleware,
   async (req: Request, res: Response): Promise<void> => {
     try {
+      const chatService = getChatService();
       const { agentId, sessionId, message, agentConfig } = req.body;
       const userId = req.userId!; // Guaranteed by authMiddleware
 
@@ -139,6 +139,7 @@ router.get(
   rateLimitMiddleware,
   async (req: Request, res: Response): Promise<void> => {
     try {
+      const chatService = getChatService();
       // Extract and decode URL-encoded parameters
       const agentId = req.query.agentId as string;
       const sessionId = req.query.sessionId as string;
