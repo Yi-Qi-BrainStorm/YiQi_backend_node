@@ -7,6 +7,10 @@ import path from 'path';
 import authRoutes from './routes/authRoutes';
 import protectedRoutes from './routes/protectedRoutes';
 import multer from 'multer';
+import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from './middleware/errorMiddleware';
+
+// Setup global error handlers for uncaught exceptions and unhandled rejections
+setupGlobalErrorHandlers();
 
 // 配置 multer
 const upload = multer();
@@ -35,6 +39,12 @@ app.get('/', (req: Request, res: Response) => {
     }
   });
 });
+
+// 404 handler - must be after all routes
+app.use(notFoundHandler);
+
+// Global error handler - must be last
+app.use(errorHandler);
 
 // 启动服务器
 app.listen(PORT, () => {
